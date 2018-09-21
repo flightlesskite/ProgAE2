@@ -1,0 +1,85 @@
+private String readFile () {
+		String message="";
+		try {
+			FileReader reader = new FileReader(messageField.getText()+".txt");
+			Scanner input = new Scanner(reader);
+			input.useDelimiter("\\Z");
+			{ 
+				message = input.next();
+			}
+			input.close();
+			reader.close();
+		}
+		
+		catch(IOException e) {
+			keyField.setText("");
+			messageField.setText("");
+			JOptionPane.showMessageDialog(null, "The File is empty.", "Warning", JOptionPane.ERROR_MESSAGE);
+		}
+		return message;
+	}
+	
+	// encrypted file output is produced
+	private void writeFile (String message) {
+		String [] tokens=message.split("[\\n ]+");
+		
+		char[][] array2D= new char[tokens.length][];
+		String fileName= messageField.getText();
+		char lastChar = messageField.getText().charAt(messageField.getText().length() - 1);
+		
+		if (lastChar== 'P')	{
+			fileName=fileName.substring(0,fileName.length()-1)+"C.txt";
+		
+			try {
+				FileWriter writer= new FileWriter (fileName);
+		
+				for (int i=0; i<tokens.length; i++)	{
+					array2D[i]=tokens[i].toCharArray();
+				}
+		
+				for (char[] array1D: array2D)	{
+					for (char c: array1D)	{
+						writer.write(mcipher.encode(c));
+						lf.addChar(mcipher.encode(c));
+					}
+					writer.write(" ");
+				}
+				writer.close();
+				writeFreq(lf.getReport());
+			}
+		
+			catch(IOException e) {
+				keyField.setText("");
+				messageField.setText("");
+				JOptionPane.showMessageDialog(null, "Nothing to write.", "Warning", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	
+		if (lastChar== 'C')	{
+			fileName=fileName.substring(0,fileName.length()-1)+"D.txt";
+					
+				try {
+					FileWriter writer= new FileWriter (fileName);
+		
+					for (int i=0; i<tokens.length; i++)	{
+						array2D[i]=tokens[i].toCharArray();
+					}
+		
+					for (char[] array1D: array2D)	{
+						for (char c: array1D)	{
+							writer.write(mcipher.decode(c));
+						}
+						writer.write(" ");
+					}
+					writer.close();
+				}
+			
+				catch(IOException e) {
+					keyField.setText("");
+					messageField.setText("");
+						JOptionPane.showMessageDialog(null, "Nothing to write.", "Warning", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		
+	}
+		
